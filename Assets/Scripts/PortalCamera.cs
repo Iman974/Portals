@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class PortalCamera : MonoBehaviour {
 
-    [SerializeField] private Transform playerCamera = null;
     [SerializeField] private Transform selfPortal = null;
     [SerializeField] private Transform startOtherPortal = null;
 
+    private Transform playerCamera;
     private Quaternion portalRotationalDifference;
     private Transform referencePortal;
 
@@ -17,6 +17,7 @@ public class PortalCamera : MonoBehaviour {
     private void Start() {
         //float angularDifferenceBetweenPortalRotations = Quaternion.Angle(selfPortal.rotation, referencePortal.rotation);
         //portalRotationalDifference = Quaternion.AngleAxis(angularDifferenceBetweenPortalRotations, Vector3.up);
+        playerCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>().transform;
         referencePortal = startOtherPortal;
     }
 

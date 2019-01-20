@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class ProximityCulling : MonoBehaviour {
+public class DistanceCulling : MonoBehaviour {
 
-    [SerializeField] float minCullingDistance = 0.5f;
+    [SerializeField] float minCullingDistance = 1f;
 
     private Transform mainCameraTransf;
     private Vector3 normal;
@@ -21,7 +21,7 @@ public class ProximityCulling : MonoBehaviour {
         Vector3 toPlayer = mainCameraTransf.position - transform.position;
         float sqrShortestDistanceToPlane = (toPlayer - Vector3.ProjectOnPlane(toPlayer, normal)).sqrMagnitude;
 
-        if (sqrShortestDistanceToPlane < sqrMinCullingDistance) {
+        if (sqrShortestDistanceToPlane < minCullingDistance * minCullingDistance) {
             selfRenderer.enabled = false;
         } else {
             selfRenderer.enabled = true;
