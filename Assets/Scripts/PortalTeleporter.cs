@@ -3,14 +3,12 @@
 public class PortalTeleporter : MonoBehaviour {
 
     [SerializeField] Transform receiver = null;
+    [SerializeField] float minTeleportDistance = 0.2f;
     //[SerializeField] Transform rightReceiver = null;
-    //[SerializeField] float minTeleportDistance = 0.23f;
     //[SerializeField] bool doLeftDistanceCheck = true;
     //[SerializeField] bool doRightDistanceCheck = false;
     private bool isPlayerOverlapping;
     private Transform player;
-
-    public bool pauseAppDebug;
 
     public static System.Action<Transform> OnPlayerTeleportEvent;
 
@@ -37,19 +35,14 @@ public class PortalTeleporter : MonoBehaviour {
             return;
         }
 
-        if (pauseAppDebug) {
-            UnityEditor.EditorApplication.isPaused = true;
+        // cf unity source of projectonplane -> optimize by removing "toPlayer -"
+        float sqrShortestDistanceToPlayer = (toPlayer - Vector3.ProjectOnPlane(toPlayer, transform.right)).sqrMagnitude;
+        if (sqrShortestDistanceToPlayer < minTeleportDistance * minTeleportDistance) {
+            //Debug.Log("Aborted teleport because too close: " + Mathf.Sqrt(sqrShortestDistanceToPlayer));
+            //Debug.DrawRay(transform.position, toPlayer - Vector3.ProjectOnPlane(toPlayer, transform.right), Color.magenta, 30f);
+            isPlayerOverlapping = false;
+            return;
         }
-
-        //if ((side == Side.Right && doRightDistanceCheck) || (side == Side.Left && doLeftDistanceCheck)) {
-        //    // cf unity source of projectonplane -> optimize by removing "toPlayer -"
-        //    float sqrShortestDistanceToPlayer = (toPlayer - Vector3.ProjectOnPlane(toPlayer, transform.right)).sqrMagnitude;
-        //    if (sqrShortestDistanceToPlayer < minTeleportDistance * minTeleportDistance) {
-        //        Debug.Log("Aborted teleport because too close: " + Mathf.Sqrt(sqrShortestDistanceToPlayer));
-        //        isPlayerOverlapping = false;
-        //        return;
-        //    }
-        //}
         player.position = toPlayer + receiver.position + transform.localPosition - receiver.localPosition;
         OnPlayerTeleportEvent?.Invoke(receiver.parent);
         isPlayerOverlapping = false;
